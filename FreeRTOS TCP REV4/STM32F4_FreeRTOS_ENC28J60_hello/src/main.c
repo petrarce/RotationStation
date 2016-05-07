@@ -346,6 +346,7 @@ void uip_log(char *msg) {
 }
 #define ASCII_9 58
 #define ASCII_0 48
+
 uint8_t myAtof(char* str,float* value)
 {
 	uint8_t i=0;
@@ -361,47 +362,35 @@ uint8_t myAtof(char* str,float* value)
 	*value=temp;
 	return 1;
 }
-#define clearBuffer tempBuffer={0,0,0,0,0}
 void parceBuffer()
 {
 	uint8_t symbolCounter=0;
 	int8_t sign=1;
 	char tempBuffer[5];
-	//char* number=malloc(5);//char* number;
 	for(int i=1; i<10;i++)
 	{
 		switch(cmdBuffer[i])
 		{
 			case 13:
-				//number=malloc(symbolCounter);
-				//memcpy(number,&tempBuffer,symbolCounter);
-				//symbolCounter=0;
 				tempBuffer[symbolCounter]=0;
 				myAtof(&tempBuffer[0],&upDriver.Pgoal);
 				upDriver.Pgoal*=sign;
-				//free(number);					
 				return;
 			case '-':
 				sign=-1;
 				break;
 			case 'H':
-				//number=malloc(symbolCounter);
-				//memcpy(number,&tempBuffer,symbolCounter);
 				tempBuffer[symbolCounter]=0;
 				myAtof(&tempBuffer[0],&dounDriver.Pgoal);
-				dounDriver.Pgoal*=sign;//atof(&tempBuffer[0]);
-				//free(number);
+				dounDriver.Pgoal*=sign;
 				sign=1;
 				symbolCounter=0;
-				//free(number);
-				//number=malloc(5);
 				break;
 			default:
-				tempBuffer[symbolCounter++]=cmdBuffer[i];//tempBuffer[symbolCounter++]=cmdBuffer[i];
+				tempBuffer[symbolCounter++]=cmdBuffer[i];
 				break;
 		}	
 	}
-	//free(number);
 	return;
 }
 
@@ -612,8 +601,8 @@ int main(void )
 	upDriver.PCur=70;
 	upDriver.mutexPCur=xSemaphoreCreateMutex();
 	upDriver.Pgoal=60;
-	upDriver.Vmax=20;
-	upDriver.Accel=20;// dont set les then 10
+	upDriver.Vmax=10;
+	upDriver.Accel=10;// dont set les then 10
 	upDriver.directionPin=GPIO_Pin_6;			//DIR
 	upDriver.tooglePin=GPIO_Pin_7;				//PULS	
 	upDriver.powerPin=GPIO_Pin_8;					//MF

@@ -180,7 +180,7 @@ void vToogleBits(void* pvParameters)
 			//-----------MAIN CODE-----------------
 			delay=SEC/(_CurSpeed*DEG_SEC*2);
 			GPIO_SetBits(currDriver->Port,currDriver->tooglePin);
-			vTaskDelay(delay);//(SEC/_CurSpeed*DEG_SEC*2);//(delay)
+			vTaskDelay(delay);
 			GPIO_ResetBits(currDriver->Port,currDriver->tooglePin);
 			vTaskDelay(delay);//(SEC/_CurSpeed*DEG_SEC*2);//
 			//xSemaphoreTake(currDriver->mutexPCur,PCUR_MUTEX_DELAY);

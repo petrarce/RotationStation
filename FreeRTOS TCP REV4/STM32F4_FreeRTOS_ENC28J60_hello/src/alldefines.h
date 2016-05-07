@@ -17,7 +17,7 @@
 #define UIP_DELAY BASE/100
 #define HOLA_DELAY BASE/100
 #define PCUR_MUTEX_DELAY BASE/100
-#define dt 0.05
+#define dt 0.01
 
 
 

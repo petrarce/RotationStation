@@ -380,7 +380,7 @@ uip_arp_out(void)
     for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
       tabptr = &arp_table[i];
       if(uip_ipaddr_cmp(ipaddr, tabptr->ipaddr)) {
-	break;
+				break;
       }
     }
 
