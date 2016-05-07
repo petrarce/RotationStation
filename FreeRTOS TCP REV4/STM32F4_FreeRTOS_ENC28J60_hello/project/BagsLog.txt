@@ -1,0 +1,39 @@
+====================================LOG OF ALL BUGS THAT WAS OCUURED DURING POVOROTKAS WORK=================================
+//!!!Plees folownext tamplate 
+//1. What bug where occured
+//2. Solution
+//3. Date
+**1.
+BUG:
+	Newer Resume task in this code
+	<code>
+		switch(cmdBuffer[0])
+		{
+			case 'R':
+			{
+				vTaskSuspend(upDriver.xAccelStop);
+				vTaskResume(upDriver.xAccelStart);
+				break;
+			}
+			case 'S':
+			{
+				vTaskSuspend(upDriver.xAccelStart);
+				vTaskResume(upDriver.xAccelStop);
+				break;
+			}
+		}
+	</code>
+SOLUTION:
+	newer use vTaskSuspend with uninitialised xTaskHandle, because uninitialised xTaskhandle=0=NULL
+	it occures vTaskSuspend(NULL), and vTaskResume(upDriver.xAccelStart) newer calls
+DATE:27/04/2016
+**
+
+**2
+BUG:
+	HardFault_error while running the program
+SOLUTION:
+	the error occures while we use malloc and free functions with freeRTOS on board
+	WARNING!!! newer use functions that uses standard memory allocation functions with freeRTOS. it will occure error
+DATE:07.05.2016
+**
