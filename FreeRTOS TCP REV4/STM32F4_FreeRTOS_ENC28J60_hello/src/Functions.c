@@ -3,7 +3,8 @@
 
 
 //#include "Constants.h"
-#define STOP_ANGLE_ERROR 1
+#define STOP_ANGLE_ERROR 0.3
+#define START_ENCREASING_SPEED_VALUE 10
 #define ERR fabs(GetMinPath(GivPhase,CUR_ANG,DIR)-StopPhase)
 //-----------------------------
 //FUNCTIONS
@@ -31,15 +32,17 @@ float Stop(float V_CUR, float dt, float ACC,int DIR)
 
 float StopAtAngle(float V_CUR, float dt, float ACC,float CUR_ANG,float GivPhase,float Vmin,float Vmax,float Vmax_STOP,int DIR)
 {
-	float StopPhase;
+	float StopPhase=pow(V_CUR,2)/(ACC*2);;
 	float Error;
+	if(ERR>START_ENCREASING_SPEED_VALUE)
+		return Start(V_CUR,dt,ACC,Vmax);		 
 	if(V_CUR>Vmax_STOP)
 	{
 		//*CUR_ANG=GetPhase(*CUR_ANG,dt,V_CUR,DIR);
 		return GetV_CUR(V_CUR,dt,-ACC);
 	}
 	else {
-		StopPhase=pow(V_CUR,2)/(ACC*2);				//calc stop path
+		//StopPhase=pow(V_CUR,2)/(ACC*2);				//calc stop path
 		Error=fabs(GetMinPath(GivPhase,CUR_ANG,DIR)-StopPhase);
 		if(ERR>STOP_ANGLE_ERROR||ERR<-STOP_ANGLE_ERROR)//if(Error>1||Error<-1)  //was >1 otrabotka s min degree
 		{

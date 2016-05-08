@@ -13,6 +13,7 @@ struct driverSettings
 	uint16_t powerPin;
 	GPIO_TypeDef* Port;
 	float VCur;
+	float Vmin;
 	float Accel;
 	float Vmax;
 	uint32_t 	tooglePeriod;

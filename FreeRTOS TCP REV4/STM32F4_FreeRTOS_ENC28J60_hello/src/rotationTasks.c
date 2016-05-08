@@ -90,7 +90,7 @@ void vStopWithRun(void* pvParameters)
 																			currDriver->Pgoal, 
 																			0, 
 																			currDriver->Vmax, 
-																			currDriver->Vmax,
+																			currDriver->Vmin,
 																			currDriver->DIR); 
 			currDriver->tooglePeriod=SEC/(currDriver->VCur*DEG_SEC*2);
 			//xSemaphoreGive(currDriver->mutexPCur);
@@ -105,7 +105,7 @@ void vStopWithRun(void* pvParameters)
 		}		
 	}			
 }
-	
+
 /*void vStopWithReturn(void* pvParameters)
 {
 		struct driverSettings* currDriver=(struct driverSettings*) pvParameters;
@@ -183,11 +183,9 @@ void vToogleBits(void* pvParameters)
 			vTaskDelay(delay);
 			GPIO_ResetBits(currDriver->Port,currDriver->tooglePin);
 			vTaskDelay(delay);//(SEC/_CurSpeed*DEG_SEC*2);//
-			//xSemaphoreTake(currDriver->mutexPCur,PCUR_MUTEX_DELAY);
 			currDriver->PCur=(GPIO_ReadOutputDataBit(currDriver->Port,currDriver->directionPin))	//not shure if 0 or 1 is right direction
 												?GetAngle(currDriver->PCur+currDriver->AngelPerStep)
 												:GetAngle(currDriver->PCur-currDriver->AngelPerStep);
-			//xSemaphoreGive(currDriver->mutexPCur);
 			Steps+=2;
 			//-------------------------------------
 			//-----------TEST CODE-----------------

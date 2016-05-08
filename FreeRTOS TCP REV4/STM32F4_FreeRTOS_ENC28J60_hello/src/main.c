@@ -585,8 +585,9 @@ int main(void )
 	dounDriver.PCur=0;
 	dounDriver.mutexPCur=xSemaphoreCreateMutex();
 	dounDriver.Pgoal=0;
-	dounDriver.Vmax=10;
-	dounDriver.Accel=10;
+	dounDriver.Vmin=3;
+	dounDriver.Vmax=120;
+	dounDriver.Accel=120;
 	dounDriver.directionPin=GPIO_Pin_13;
 	dounDriver.tooglePin=GPIO_Pin_14;
 	dounDriver.powerPin=GPIO_Pin_15;
@@ -601,6 +602,7 @@ int main(void )
 	upDriver.PCur=70;
 	upDriver.mutexPCur=xSemaphoreCreateMutex();
 	upDriver.Pgoal=60;
+	upDriver.Vmin=3;
 	upDriver.Vmax=10;
 	upDriver.Accel=10;// dont set les then 10
 	upDriver.directionPin=GPIO_Pin_6;			//DIR
@@ -615,7 +617,6 @@ int main(void )
 	mainShedulerObjects.Buffer=&cmdBuffer[0];
 	mainShedulerObjects.dounDriver=&dounDriver;
 	mainShedulerObjects.upDriver=&upDriver;
-
 	  //struct uip_eth_addr mac = { { 0x00, 0x01, 0x02, 0x03, 0x04, 0x00 } };
 	  struct uip_eth_addr mac = { {0x54,0x55,0x58,0x10,0x00,0x29} };
 	  //mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x29};
