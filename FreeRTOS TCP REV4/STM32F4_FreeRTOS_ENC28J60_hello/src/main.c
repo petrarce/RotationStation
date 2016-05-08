@@ -344,9 +344,35 @@ void vTask_uIP(void *pvParameters) {
 void uip_log(char *msg) {
 
 }
+
+#define DETECTION_LEVEL 100
+#define EAST 0
+xSemaphoreHandle xMainShedularAndCalibrationMutex;
+xTaskHandle xCalibrateAngle;
+void vCalibrateAngle(void* pvParameters)
+{
+	sDriverSettings* currDriver = (sDriverSettings*) pvParameters;
+	xSemaphoreTake(xMainShedularAndCalibrationMutex,portMAX_DELAY);
+	while(1)
+	{		
+		vTaskSuspend(currDriver->xAccelStop);
+		vTaskSuspend(currDriver->xStopWithRun);
+		vTaskResume(currDriver->xAccelStart);
+		
+		if(ConvertedValue<DETECTION_LEVEL)
+		{
+			currDriver->PCur=EAST;
+			vTaskSuspend(currDriver->xAccelStart);
+			vTaskResume(currDriver->xAccelStop);
+			xSemaphoreGive(xMainShedularAndCalibrationMutex);
+			vTaskSuspend(NULL);
+			xSemaphoreTake(xMainShedularAndCalibrationMutex,portMAX_DELAY);
+
+		}
+	}
+}
 #define ASCII_9 58
 #define ASCII_0 48
-
 uint8_t myAtof(char* str,float* value)
 {
 	uint8_t i=0;
@@ -535,6 +561,7 @@ void turnTasks()
 		case 'J':
 		{
 			upDriver.PCur=X_Inclinometer+70;
+			vTaskResume(xCalibrateAngle);
 			break;
 		}
 		default:
@@ -548,13 +575,16 @@ void vMainSheduler(void* pvParameter)
 {
 	//const sMainSheduler* localShedulerData=(sMainSheduler*) pvParameter;
 	xTaskHandle* selfHandle=(xTaskHandle*) pvParameter;
+  xSemaphoreTake(xMainShedularAndCalibrationMutex,portMAX_DELAY);
 	while(1)
 	{
 		
 		parceBuffer();
 		turnTasks();
 		
+		xSemaphoreGive(xMainShedularAndCalibrationMutex);
 		vTaskSuspend(*selfHandle);
+		xSemaphoreTake(xMainShedularAndCalibrationMutex,portMAX_DELAY);
 	}
 }
 	
@@ -580,6 +610,8 @@ int main(void )
 	GPIO_SetBits(GPIOC,GPIO_Pin_6 | GPIO_Pin_8); // UP DRIVER
 	adc_configure();//Start configuration
 	//xTaskHandle xMainSheduler;
+	
+	xMainShedularAndCalibrationMutex=xSemaphoreCreateMutex();
 	//-------------------------------------- initialise downDriver -------------------------------
 	dounDriver.VCur=0;
 	dounDriver.PCur=0;
@@ -693,7 +725,11 @@ int main(void )
 	xTaskCreate(vMainSheduler, 					 (signed char *) "vMainSheduler",
 							configMINIMAL_STACK_SIZE,(void*) &xMainSheduler, 
 							tskIDLE_PRIORITY+1, 												&xMainSheduler);		
-	vTaskSuspend(xMainSheduler);						
+	vTaskSuspend(xMainSheduler);	
+	xTaskCreate(vCalibrateAngle, 					(signed char *) "vCalibrateAngle",
+							configMINIMAL_STACK_SIZE, (void*) &dounDriver, 
+							tskIDLE_PRIORITY+1,				&xCalibrateAngle);		
+	vTaskSuspend(xCalibrateAngle);							
 	//-------------------------------------- Test Tasks -------------------------------------------
 	//xTaskCreate(vHolaCounter,(signed char *)"vHolaCounter", 256, NULL, tskIDLE_PRIORITY+1,&xHolaCounter);	
 	//vTaskSuspend(xHolaCounter);	
